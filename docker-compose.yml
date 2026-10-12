@@ -1,6 +1,28 @@
 name: data-engineering
 
 services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: data-engineering-clickhouse
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+    healthcheck:
+      test: [ "CMD-SHELL", "clickhouse-client --query 'SELECT 1'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
   jupyter:
     image: quay.io/jupyter/scipy-notebook:latest
     ports:
@@ -58,6 +80,7 @@ services:
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
+      - ./data:/data:ro
     user: "${AIRFLOW_UID:-50000}:0"
     depends_on:
       airflow-db:
@@ -99,3 +122,5 @@ services:
 volumes:
   postgres_data:
   airflow_db_data:
+  clickhouse_data:
+  clickhouse_logs:
