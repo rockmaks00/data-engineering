@@ -16,14 +16,10 @@
    docker compose up -d
    ```
 
-# Демонстрация
+# Адреса
 
-## 1. Работа с Jupyter и pandas, результат ipynb-файл со скриптом
+- Apache Airflow - http://localhost:8080
 
-### 1.1. Загрузка и просмотр данных
+- Postgres - localhost:5432
 
-![img.png](images/img.png)
-
-### 1.2. Вывод
-
-![img.png](images/img2.png)
+- Clickhouse - localhost:8123
